@@ -1,0 +1,14 @@
+service : {
+  getGameState: () ->
+   (record {
+      currentPlayer: nat;
+      players: vec opt nat;
+      snakesAndLadders: vec record {
+                              nat;
+                              nat;
+                            };
+    }) query;
+  initGame: () -> ();
+  movePlayer: (nat, nat) -> (opt nat);
+  rollDice: () -> (nat);
+}
