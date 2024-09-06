@@ -1,8 +1,10 @@
 import Array "mo:base/Array";
 import Nat "mo:base/Nat";
-import Random "mo:base/Random";
 import Int "mo:base/Int";
 import Iter "mo:base/Iter";
+import Time "mo:base/Time";
+import Hash "mo:base/Hash";
+import Nat32 "mo:base/Nat32";
 
 actor {
   type GameState = {
@@ -29,10 +31,10 @@ actor {
     };
   };
 
-  public func rollDice() : async Nat {
-    let seed = await Random.blob();
-    let randomNumber = Random.rangeFrom(6, seed);
-    randomNumber + 1
+  public query func rollDice() : async Nat {
+    let now = Int.abs(Time.now());
+    let hash = Nat32.toNat(Hash.hash(now));
+    (hash % 6) + 1
   };
 
   public func movePlayer(playerId: Nat, steps: Nat) : async ?Nat {

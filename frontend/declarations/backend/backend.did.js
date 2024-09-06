@@ -13,7 +13,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'initGame' : IDL.Func([], [], []),
     'movePlayer' : IDL.Func([IDL.Nat, IDL.Nat], [IDL.Opt(IDL.Nat)], []),
-    'rollDice' : IDL.Func([], [IDL.Nat], []),
+    'rollDice' : IDL.Func([], [IDL.Nat], ['query']),
   });
 };
 export const init = ({ IDL }) => { return []; };
