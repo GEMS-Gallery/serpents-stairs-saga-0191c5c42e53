@@ -38,6 +38,8 @@ const Player = styled(Box)<{ player: number }>(({ theme, player }) => ({
   backgroundColor: player === 0 ? '#48bb78' : '#4299e1',
 }));
 
+const fromBigInt = (value: bigint): number => Number(value);
+
 const App: React.FC = () => {
   const [gameState, setGameState] = useState<any>(null);
   const [diceValue, setDiceValue] = useState<number | null>(null);
@@ -55,14 +57,14 @@ const App: React.FC = () => {
   const rollDice = async () => {
     setLoading(true);
     const value = await backend.rollDice();
-    setDiceValue(value);
-    await movePlayer(value);
+    setDiceValue(fromBigInt(value));
+    await movePlayer(fromBigInt(value));
     setLoading(false);
   };
 
   const movePlayer = async (steps: number) => {
-    const currentPlayer = gameState.currentPlayer;
-    await backend.movePlayer(currentPlayer, steps);
+    const currentPlayer = fromBigInt(gameState.currentPlayer);
+    await backend.movePlayer(BigInt(currentPlayer), BigInt(steps));
     await fetchGameState();
   };
 
@@ -72,8 +74,8 @@ const App: React.FC = () => {
       cells.push(
         <Cell key={i}>
           {i}
-          {gameState.players.map((pos: number | null, index: number) => 
-            pos === i ? <Player key={index} player={index} /> : null
+          {gameState.players.map((pos: bigint | null, index: number) => 
+            pos !== null && fromBigInt(pos) === i ? <Player key={index} player={index} /> : null
           )}
         </Cell>
       );
@@ -108,13 +110,13 @@ const App: React.FC = () => {
       </Box>
       <Box sx={{ mt: 2 }}>
         <Typography>
-          Current Player: {gameState.currentPlayer + 1}
+          Current Player: {fromBigInt(gameState.currentPlayer) + 1}
         </Typography>
         <Typography>
-          Player 1 Position: {gameState.players[0] || 'Start'}
+          Player 1 Position: {gameState.players[0] ? fromBigInt(gameState.players[0]) : 'Start'}
         </Typography>
         <Typography>
-          Player 2 Position: {gameState.players[1] || 'Start'}
+          Player 2 Position: {gameState.players[1] ? fromBigInt(gameState.players[1]) : 'Start'}
         </Typography>
       </Box>
     </Box>
