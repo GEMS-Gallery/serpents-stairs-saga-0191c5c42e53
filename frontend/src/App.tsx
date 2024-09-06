@@ -58,15 +58,14 @@ const App: React.FC = () => {
     setLoading(true);
     const value = await backend.rollDice();
     setDiceValue(fromBigInt(value));
+    await movePlayer(fromBigInt(value));
     setLoading(false);
   };
 
-  const movePlayer = async () => {
-    if (diceValue === null) return;
+  const movePlayer = async (steps: number) => {
     const currentPlayer = fromBigInt(gameState.currentPlayer);
-    await backend.movePlayer(BigInt(currentPlayer), BigInt(diceValue));
+    await backend.movePlayer(BigInt(currentPlayer), BigInt(steps));
     await fetchGameState();
-    setDiceValue(null);
   };
 
   const renderBoard = () => {
@@ -97,11 +96,11 @@ const App: React.FC = () => {
       <Box sx={{ mt: 2 }}>
         <Button
           variant="contained"
-          onClick={diceValue === null ? rollDice : movePlayer}
+          onClick={rollDice}
           disabled={loading}
           sx={{ mr: 2 }}
         >
-          {loading ? <CircularProgress size={24} /> : (diceValue === null ? 'Roll Dice' : 'Move Player')}
+          {loading ? <CircularProgress size={24} /> : 'Roll Dice'}
         </Button>
         {diceValue && (
           <Typography variant="h6" component="span">

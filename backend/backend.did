@@ -10,5 +10,5 @@ service : {
     }) query;
   initGame: () -> ();
   movePlayer: (nat, nat) -> (opt nat);
-  rollDice: () -> (nat) query;
+  rollDice: () -> (nat);
 }
