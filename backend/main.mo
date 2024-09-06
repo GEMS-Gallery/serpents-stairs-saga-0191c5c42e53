@@ -73,4 +73,8 @@ actor {
       snakesAndLadders = gameState.snakesAndLadders;
     }
   };
+
+  public func newGame() : async () {
+    await initGame();
+  };
 }

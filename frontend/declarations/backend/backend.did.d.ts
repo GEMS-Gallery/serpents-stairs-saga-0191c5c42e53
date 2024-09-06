@@ -13,6 +13,7 @@ export interface _SERVICE {
   >,
   'initGame' : ActorMethod<[], undefined>,
   'movePlayer' : ActorMethod<[bigint, bigint], [] | [bigint]>,
+  'newGame' : ActorMethod<[], undefined>,
   'rollDice' : ActorMethod<[], bigint>,
 }
 export declare const idlFactory: IDL.InterfaceFactory;

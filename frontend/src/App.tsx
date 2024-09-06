@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Button, CircularProgress, Box } from '@mui/material';
+import { Typography, Button, CircularProgress, Box, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { styled } from '@mui/system';
 import { backend } from 'declarations/backend';
 
@@ -44,6 +44,7 @@ const App: React.FC = () => {
   const [gameState, setGameState] = useState<any>(null);
   const [diceValue, setDiceValue] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const [rulesOpen, setRulesOpen] = useState(false);
 
   useEffect(() => {
     fetchGameState();
@@ -66,6 +67,14 @@ const App: React.FC = () => {
     const currentPlayer = fromBigInt(gameState.currentPlayer);
     await backend.movePlayer(BigInt(currentPlayer), BigInt(steps));
     await fetchGameState();
+  };
+
+  const newGame = async () => {
+    setLoading(true);
+    await backend.newGame();
+    await fetchGameState();
+    setDiceValue(null);
+    setLoading(false);
   };
 
   const renderBoard = () => {
@@ -102,6 +111,21 @@ const App: React.FC = () => {
         >
           {loading ? <CircularProgress size={24} /> : 'Roll Dice'}
         </Button>
+        <Button
+          variant="outlined"
+          onClick={newGame}
+          disabled={loading}
+          sx={{ mr: 2 }}
+        >
+          New Game
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => setRulesOpen(true)}
+          sx={{ mr: 2 }}
+        >
+          Rules
+        </Button>
         {diceValue && (
           <Typography variant="h6" component="span">
             Dice: {diceValue}
@@ -119,6 +143,29 @@ const App: React.FC = () => {
           Player 2 Position: {gameState.players[1] ? fromBigInt(gameState.players[1]) : 'Start'}
         </Typography>
       </Box>
+      <Dialog open={rulesOpen} onClose={() => setRulesOpen(false)}>
+        <DialogTitle>Snakes and Ladders Rules</DialogTitle>
+        <DialogContent>
+          <Typography paragraph>
+            1. Players take turns rolling a die and moving their token the number of spaces shown on the die.
+          </Typography>
+          <Typography paragraph>
+            2. If a player lands on the bottom of a ladder, they climb up to the top of the ladder.
+          </Typography>
+          <Typography paragraph>
+            3. If a player lands on the head of a snake, they slide down to the tail of the snake.
+          </Typography>
+          <Typography paragraph>
+            4. The first player to reach or exceed the last square (100) wins the game.
+          </Typography>
+          <Typography paragraph>
+            5. If a player rolls a number that would put them beyond the last square, they move backwards for the remaining number of spaces.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setRulesOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
